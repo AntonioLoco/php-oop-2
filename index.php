@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . "/Models/Cliente.php";
+require_once __DIR__ . "/Models/ClienteIscritto.php";
+require_once __DIR__ . "/Models/Carrello.php";
+require_once __DIR__ . "/Models/CartaDiCredito.php";
 require_once __DIR__ . "/Models/Prodotto.php";
 require_once __DIR__ . "/Models/Categoria.php";
 require_once __DIR__ . "/Models/ProdottoCibo.php";
@@ -12,6 +16,23 @@ $listaProdotti = [
     new ProdottoGiochi("Tira Graffi", "https://m.media-amazon.com/images/I/71PQ7m+-OcL._AC_SY450_.jpg", new Categoria("Gatti"), 119.99, 2000, "grigio")
 ];
 
+// Utente Non registrato
+$utente = new Cliente("Francesco", "Cimino");
+$utente->setSconto();
+
+//Utente Registrato
+$utenteIscritto = new ClienteIscritto("Antonio", "Loco");
+$utenteIscritto->setSconto();
+
+// Creo il carrello
+$carrello = new Carrello(new CartaDiCredito("2046 4456 1206 2334", date("11/08/2025")), $utente->getSconto());
+
+//Aggiungo prodotti al carrello
+$carrello->aggiungiProdotto($listaProdotti[0]);
+$carrello->aggiungiProdotto($listaProdotti[2]);
+
+// Acquisto
+// $carrello->Acquista();
 ?>
 
 
@@ -28,7 +49,7 @@ $listaProdotti = [
 
 <body>
     <main class="container">
-        <div class="row row-cols-5">
+        <section class="row row-cols-3">
             <?php foreach ($listaProdotti as $prodotto) { ?>
                 <div class="col">
                     <div class="card">
@@ -58,7 +79,33 @@ $listaProdotti = [
                     </div>
                 </div>
             <?php } ?>
-        </div>
+        </section>
+
+        <section class="py-5">
+            <h1>Carrello</h1>
+            <div class="card" style="width: 18rem;">
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($carrello->getProdotti() as $prodotto) { ?>
+                        <li class="list-group-item d-flex align-items-center justify-content-between">
+                            <p class="m-0"><?php echo $prodotto->nome ?></p>
+                            <h5 class="m-0"><?php echo $prodotto->getPrezzo(); ?>$</h5>
+                        </li>
+                    <?php } ?>
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <p class="m-0">Sconto:</p>
+                        <h5 class="m-0"><?php echo $carrello->getSconto(); ?>%</h5>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <p class="m-0">Totale:</p>
+                        <h5 class="m-0"><?php echo $carrello->getPrezzo(); ?>$</h5>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <p class="m-0">Esito Pagamento:</p>
+                        <h5 class="m-0"><?php echo $carrello->getEsitoPagamento(); ?></h5>
+                    </li>
+                </ul>
+            </div>
+        </section>
     </main>
 </body>
 
